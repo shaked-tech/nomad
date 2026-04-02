@@ -9,6 +9,11 @@ echo "==> Cleaning up old data dirs..."
 rm -rf /tmp/nomad
 mkdir -p /tmp/nomad/{server,client1,client2,volumes/nomad-ops}
 
+echo "==> Building CA bundle for Docker containers..."
+docker run --rm alpine cat /etc/ssl/certs/ca-certificates.crt > /tmp/nomad/volumes/ca-full.crt 2>/dev/null
+security find-certificate -a -p /Library/Keychains/System.keychain >> /tmp/nomad/volumes/ca-full.crt 2>/dev/null
+security find-certificate -a -p /System/Library/Keychains/SystemRootCertificates.keychain >> /tmp/nomad/volumes/ca-full.crt 2>/dev/null
+
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
 echo "==> Starting Nomad server..."

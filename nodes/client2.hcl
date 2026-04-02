@@ -14,6 +14,7 @@ client {
 
   options = {
     "fingerprint.denylist" = "env_aws,env_gce,env_azure,env_digitalocean"
+    "docker.volumes.enabled" = "true"
   }
 
   host_volume "nomad-ops-data" {

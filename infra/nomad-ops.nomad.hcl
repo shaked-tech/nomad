@@ -45,6 +45,7 @@ job "nomad-ops" {
       env {
         NOMAD_ADDR               = "http://host.docker.internal:4646"
         NOMAD_OPS_LOCAL_REPO_DIR = "/data/repos"
+        SSL_CERT_FILE            = "/etc/ssl/certs/ca-certificates.crt"
         TRACE                    = "FALSE"
       }
 
@@ -57,6 +58,10 @@ job "nomad-ops" {
         ]
 
         ports = ["http"]
+
+        volumes = [
+          "/tmp/nomad/volumes/ca-full.crt:/etc/ssl/certs/ca-certificates.crt:ro",
+        ]
       }
 
       resources {
