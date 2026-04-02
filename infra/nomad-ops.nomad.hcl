@@ -1,4 +1,5 @@
 job "nomad-ops" {
+  namespace   = "default"
   datacenters = ["dc1"]
   type        = "service"
 
@@ -16,6 +17,7 @@ job "nomad-ops" {
     }
 
     network {
+      mode = "host"
       port "http" {
         static = 8080
       }
@@ -37,6 +39,10 @@ job "nomad-ops" {
     task "operator" {
       driver = "docker"
 
+      identity {
+        file = true
+      }
+
       volume_mount {
         volume      = "data"
         destination = "/data"
@@ -44,13 +50,15 @@ job "nomad-ops" {
 
       env {
         NOMAD_ADDR               = "http://host.docker.internal:4646"
+        NOMAD_TOKEN_FILE         = "${NOMAD_SECRETS_DIR}/nomad_token"
         NOMAD_OPS_LOCAL_REPO_DIR = "/data/repos"
-        SSL_CERT_FILE            = "/etc/ssl/certs/ca-certificates.crt"
+        SSL_CERT_FILE            = "/data/ca-certificates.crt"
         TRACE                    = "FALSE"
       }
 
       config {
-        image = "ghcr.io/nomad-ops/nomad-ops:v0.9.2"
+        image        = "ghcr.io/nomad-ops/nomad-ops:main"
+        network_mode = "host"
         args = [
           "serve",
           "--http", "0.0.0.0:${NOMAD_PORT_http}",
@@ -58,10 +66,6 @@ job "nomad-ops" {
         ]
 
         ports = ["http"]
-
-        volumes = [
-          "/tmp/nomad/volumes/ca-full.crt:/etc/ssl/certs/ca-certificates.crt:ro",
-        ]
       }
 
       resources {

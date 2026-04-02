@@ -1,4 +1,5 @@
 job "counting" {
+  namespace   = "default"
   datacenters = ["dc1"]
   type        = "service"
 

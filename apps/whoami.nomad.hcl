@@ -1,4 +1,5 @@
 job "whoami" {
+  namespace   = "default"
   datacenters = ["dc1"]
   type        = "service"
 
