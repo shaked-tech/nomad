@@ -29,7 +29,7 @@ job "nginx" {
       config {
         image = "nginx:latest"
         ports = ["http"]
-      }
+
 
       resources {
         cpu    = 50
