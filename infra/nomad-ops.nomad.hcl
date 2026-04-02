@@ -10,6 +10,11 @@ job "nomad-ops" {
   group "nomad-ops" {
     count = 1
 
+    volume "data" {
+      type   = "host"
+      source = "nomad-ops-data"
+    }
+
     network {
       port "http" {
         static = 8080
@@ -32,10 +37,15 @@ job "nomad-ops" {
     task "operator" {
       driver = "docker"
 
+      volume_mount {
+        volume      = "data"
+        destination = "/data"
+      }
+
       env {
-        NOMAD_ADDR             = "http://host.docker.internal:4646"
+        NOMAD_ADDR               = "http://host.docker.internal:4646"
         NOMAD_OPS_LOCAL_REPO_DIR = "/data/repos"
-        TRACE                  = "FALSE"
+        TRACE                    = "FALSE"
       }
 
       config {
@@ -47,14 +57,6 @@ job "nomad-ops" {
         ]
 
         ports = ["http"]
-
-        mounts = [
-          {
-            type   = "volume"
-            target = "/data"
-            source = "nomad-ops-data"
-          },
-        ]
       }
 
       resources {

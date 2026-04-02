@@ -16,6 +16,11 @@ client {
     "fingerprint.denylist" = "env_aws,env_gce,env_azure,env_digitalocean"
   }
 
+  host_volume "nomad-ops-data" {
+    path      = "/tmp/nomad/volumes/nomad-ops"
+    read_only = false
+  }
+
   cpu_total_compute = 2000
   memory_total_mb   = 8192
 

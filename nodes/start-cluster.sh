@@ -7,7 +7,7 @@ set -e
 
 echo "==> Cleaning up old data dirs..."
 rm -rf /tmp/nomad
-mkdir -p /tmp/nomad/{server,client1,client2}
+mkdir -p /tmp/nomad/{server,client1,client2,volumes/nomad-ops}
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 

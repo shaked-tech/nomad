@@ -55,37 +55,49 @@ job "traefik" {
         data = <<-EOF
           http:
             routers:
+          {{ $nomadOps := nomadService "nomad-ops" }}{{ if $nomadOps }}
               nomad-ops:
                 rule: "Host(`nomad-ops.localhost`)"
                 entrypoints: ["web"]
                 service: nomad-ops
+          {{ end }}
+          {{ $vote := nomadService "vote" }}{{ if $vote }}
               vote:
                 rule: "Host(`vote.localhost`)"
                 entrypoints: ["web"]
                 service: vote
+          {{ end }}
+          {{ $result := nomadService "result" }}{{ if $result }}
               result:
                 rule: "Host(`result.localhost`)"
                 entrypoints: ["web"]
                 service: result
+          {{ end }}
             services:
+          {{ if $nomadOps }}
               nomad-ops:
                 loadBalancer:
                   servers:
-                  {{ range nomadService "nomad-ops" }}
+                  {{ range $nomadOps }}
                     - url: "http://host.docker.internal:{{ .Port }}"
                   {{ end }}
+          {{ end }}
+          {{ if $vote }}
               vote:
                 loadBalancer:
                   servers:
-                  {{ range nomadService "vote" }}
+                  {{ range $vote }}
                     - url: "http://host.docker.internal:{{ .Port }}"
                   {{ end }}
+          {{ end }}
+          {{ if $result }}
               result:
                 loadBalancer:
                   servers:
-                  {{ range nomadService "result" }}
+                  {{ range $result }}
                     - url: "http://host.docker.internal:{{ .Port }}"
                   {{ end }}
+          {{ end }}
         EOF
         destination = "local/dynamic.yaml"
         change_mode = "noop"
